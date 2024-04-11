@@ -1,7 +1,5 @@
 package ru.elengaupt.geometry;
 
-import java.util.Arrays;
-
 public class ClosedBrokenLine extends BrokenLine implements Measurable{
 
     public ClosedBrokenLine(Point...points){

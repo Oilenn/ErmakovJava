@@ -1,8 +1,5 @@
 package ru.elengaupt.math;
-import com.sun.jdi.connect.Connector;
 
-import java.io.StringReader;
-import java.math.BigInteger;
 public class Fraction extends Number{
     private int numerator;
     private int denominator;

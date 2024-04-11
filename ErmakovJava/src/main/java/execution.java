@@ -1,27 +1,5 @@
-package ru.elengaupt.main;
-
-import ru.elengaupt.Box;
-import ru.elengaupt.Storage;
-import ru.elengaupt.cities.City;
-import ru.elengaupt.dataBase.Connection;
-import ru.elengaupt.dataBase.ConnectionCreator;
-import ru.elengaupt.dataBase.DataBase;
 import ru.elengaupt.geometry.Line;
-import ru.elengaupt.geometry.ThreeDimensionalPoint;
-import ru.elengaupt.human.Student;
-import ru.elengaupt.math.Fraction;
 import ru.elengaupt.utils.Utils;
-import ru.elengaupt.weapons.Gun;
-import ru.elengaupt.weapons.MachineGun;
-import ru.elengaupt.weapons.Shooter;
-import ru.elengaupt.weapons.Weapon;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import ru.elengaupt.geometry.Point;
 
 import static java.lang.Math.pow;
 import static java.lang.Integer.parseInt;

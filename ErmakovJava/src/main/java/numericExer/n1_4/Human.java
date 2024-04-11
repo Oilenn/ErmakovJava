@@ -1,9 +1,7 @@
 package numericExer.n1_4;
 
-import numericExer.n1_2.Name;
-
 public class Human {
-    numericExer.n1_2.Name name;
+    Name name;
     int height;
     private Human father;
     public Human(Name name, int height, Human father){

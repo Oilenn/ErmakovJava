@@ -1,7 +1,6 @@
 package ru.elengaupt.human;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Student implements Comparable<Student> {

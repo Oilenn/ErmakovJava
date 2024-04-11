@@ -1,14 +1,12 @@
 package numericExer.n1_4;
 
-import numericExer.n1_1.Point;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BrokenLine {
-    ArrayList<Point> points = new ArrayList<>();
+    ArrayList<numericExer.n1_4.Point> points = new ArrayList<>();
 
-    public BrokenLine(Point...points){
+    public BrokenLine(numericExer.n1_4.Point...points){
         this.points.addAll(Arrays.asList(points));
     }
 

@@ -1,7 +1,5 @@
 package ru.elengaupt.geometry;
 
-import ru.elengaupt.math.Fraction;
-
 public class Point {
     public int x,y;
 

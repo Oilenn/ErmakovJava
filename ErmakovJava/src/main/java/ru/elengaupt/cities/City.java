@@ -1,7 +1,5 @@
 package ru.elengaupt.cities;
 
-import ru.elengaupt.math.Fraction;
-
 import java.util.HashMap;
 import java.util.Map;
 
