@@ -12,6 +12,7 @@ public class Human {
             name.changeNameByFather(father.name);
         }
     }
+
     public Human(Name name, int height) {
         this(name, height, null);
     }
