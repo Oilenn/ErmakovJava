@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,24 +15,30 @@ public class DataAccessObject<T> {
     private final Class<T> cls;
 
     public void insert(T object) throws SQLException {
-        Connection con = dataSource.getConnection();
+        String name = object.getClass().getSimpleName();
+        String columns = "(";
+        String values = "values(";
+        Connection connection = dataSource.getConnection();
         List<Field> fields = Arrays.stream(object.getClass().getFields()).toList();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("insert into "  + object.getClass().getSimpleName() + "(");
 
         for(int i = 0; i < fields.size(); i++){
             fields.get(i).setAccessible(true);
-            sql.append(fields.getClass().getName()).append(", ");
+            columns += fields.getClass().getName() + ", ";
         }
+        columns += ")";
 
-        sql.append(")");
+        for(int i = 1; i < fields.size() - 1; i++){
+            values += "?,";
+        }
+        values += "?)";
 
-        PreparedStatement statement = con.prepareStatement(sql + "values(?, ?)");
+        sql.append("insert into "  + name + columns + values);
+        PreparedStatement statement = connection.prepareStatement(sql.toString());
 
         for(int i = 0; i < fields.size(); i++){
             fields.get(i).setAccessible(true);
-
             try {
                 statement.setObject(i + 1, fields.get(i).get(object));
             } catch(IllegalAccessException e){
@@ -43,26 +47,53 @@ public class DataAccessObject<T> {
         }
 
         statement.execute();
+        connection.close();
     }
 
     public void delete(int id) throws SQLException {
-        Connection con = dataSource.getConnection();
+        Connection connection = dataSource.getConnection();
         Class<T> clazz = (Class<T>) getClass().getGenericSuperclass();
-        Statement statement = con.createStatement();
+        Statement statement = connection.createStatement();
 
-        statement.execute("delete from" + clazz.getName() + " where Id = " + id);
+        statement.execute("delete from" + clazz.getSimpleName() + " where Id = " + id);
+
+        connection.close();
+    }
+
+    public void delete(T object) throws SQLException {
+        Connection connection = dataSource.getConnection();
+        String clazz = object.getClass().getSimpleName();
+        Statement statement = connection.createStatement();
+
+        try {
+            Field id = Object.class.getField("Id");
+            statement.execute("delete from" + clazz + " where Id = " + id.get(object));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        };
+
+        connection.close();
     }
 
     public void update(int id, T object) throws SQLException {
-        Connection con = dataSource.getConnection();
-
-        PreparedStatement statement = con.prepareStatement("update Employee set Name = ?, Department = ? where Id = ?");
-
+        String name = object.getClass().getSimpleName();
+        String values = "set ";
+        Connection connection = dataSource.getConnection();
         List<Field> fields = Arrays.stream(object.getClass().getFields()).toList();
+
+        StringBuilder sql = new StringBuilder();
+
+        for(int i = 1; i < fields.size() - 1; i++){
+            fields.get(i).setAccessible(true);
+            values += fields.get(i).getName() + "= ?, ";
+        }
+        values += fields.get(fields.size() - 1).getName() + "= ?";
+
+        sql.append("update "  + name + values + "where Id = " + id);
+        PreparedStatement statement = connection.prepareStatement(sql.toString());
 
         for(int i = 0; i < fields.size(); i++){
             fields.get(i).setAccessible(true);
-
             try {
                 statement.setObject(i + 1, fields.get(i).get(object));
             } catch(IllegalAccessException e){
@@ -70,30 +101,44 @@ public class DataAccessObject<T> {
             }
         }
 
+        statement.execute();
+        connection.close();
+    }
 
-        statement.execute("update Employee set Name = ?, Department = ? where" + id +" = ?");
+    public List<T> getAll() throws SQLException, InstantiationException, IllegalAccessException {
+        List<T> result = new ArrayList<>();
 
-        for(int i = 0; i < fields.size(); i++){
-            fields.get(i).setAccessible(true);
+        Connection connection = dataSource.getConnection();
+        Statement statement = connection.createStatement();
 
-            try {
-                statement.setObject(i + 1, fields.get(i + 1).get(object));
-            } catch(IllegalAccessException e){
-                e.printStackTrace();
+
+        ResultSet rs = statement.executeQuery("select * from " + cls.getGenericSuperclass().getClass().getSimpleName());
+
+        while(rs.next()) {
+            T object = cls.newInstance();
+            for(Field field: cls.getDeclaredFields()){
+                field.setAccessible(true);
+                field.set(object, rs.getObject(field.getName()));
             }
         }
 
+        connection.close();
+        return result;
     }
 
-    public void getAll(T object) throws SQLException {
-        statement.execute("select * from Employee");
-    }
-
-    public void createTable() throws SQLException {
-        Connection con = dataSource.getConnection();
-
-        Statement statement = con.createStatement();
-
-        statement.execute("create table Employee(int Id, Name varchar(50), Department int) if exists");
-    }
+//    public void createTable() throws SQLException {
+//        Connection con = dataSource.getConnection();
+//
+//        Statement statement = con.createStatement();
+//        List<Field> fields = Arrays.stream(cls.getFields()).toList();
+//
+//        StringBuilder sql = new StringBuilder();
+//
+//        for(int i = 1; i < fields.size() - 1; i++){
+//            fields.get(i).setAccessible(true);
+//            values += fields.get(i).getName() + "= ?, ";
+//        }
+//
+//        statement.execute("create table" + cls.getSimpleName() +  + " if not exists");
+//    }
 }
