@@ -12,6 +12,6 @@ import java.sql.Statement;
 public class Main {
     public static void main(String[] args) throws SQLException {
 
-        Connection source = DriverManager.getConnection("jdbc:h2./office");
+        //Connection source = DriverManager.getConnection("jdbc:h2./office");
     }
 }

@@ -9,10 +9,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@AllArgsConstructor
+
 public class DataAccessObject<T> {
     private final DataSource dataSource;
     private final Class<T> cls;
+
+    public DataAccessObject(DataSource dataSource, Class<T> cls) {
+        this.dataSource = dataSource;
+        this.cls = cls;
+    }
 
     public void insert(T object) throws SQLException {
         String name = object.getClass().getSimpleName();

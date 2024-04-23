@@ -1,5 +1,7 @@
 package ru.elengaupt.beans;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,8 +17,8 @@ public class Beans {
     }
 
     @Bean
-    public int random(){
-        return (int)(Math.random() * 99);
+    public int random(int min, int max){
+        return (int)((Math.random() * max) + min);
     }
 
     @Bean
@@ -30,12 +32,12 @@ public class Beans {
     }
 
     @Bean
-    public int min(){
+    public Integer min(){
         return 0;
     }
 
     @Bean
-    public int max(){
+    public Integer max(){
         return 110;
     }
 }
